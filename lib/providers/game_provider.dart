@@ -33,6 +33,28 @@ class GameProvider extends ChangeNotifier {
   GameDifficulty _gameDifficulty = GameDifficulty.easy;
   String _gameId = '';
 
+  // Chips handling variables
+  int _chipsWageredByPlayer1 = 0;
+  int _chipsWageredByPlayer2 = 0;
+  int _winner = 0; // 0 for no winner, 1 for player 1, 2 for player 2
+
+  // getters for chips handlers
+  int get chipsWageredByPlayer1 => _chipsWageredByPlayer1;
+  int get chipsWageredByPlayer2 => _chipsWageredByPlayer2;
+  int get winner => _winner;
+
+  // setters for chips handlers
+    set chipsWageredByPlayer1(int value) {
+    _chipsWageredByPlayer1 = value;
+    notifyListeners();
+  }
+
+  set chipsWageredByPlayer2(int value) {
+    _chipsWageredByPlayer2 = value;
+    notifyListeners();
+  }
+
+
   String get gameId => _gameId;
 
   Duration _whitesTime = Duration.zero;
@@ -247,8 +269,6 @@ class GameProvider extends ChangeNotifier {
             timeOut: true,
             whiteWon: true,
             onNewGame: onNewGame,
-            userChips: UserModel.fromMap(chipsAmounts: userChips),
-            wager: 0,
           );
         }
       }
@@ -278,8 +298,7 @@ class GameProvider extends ChangeNotifier {
             timeOut: true,
             whiteWon: false,
             onNewGame: onNewGame,
-            userChips: ,
-            wager: 0,
+            
           );
         }
       }
@@ -312,8 +331,6 @@ class GameProvider extends ChangeNotifier {
           timeOut: false,
           whiteWon: false,
           onNewGame: onNewGame,
-          userChips: chipsAmounts,
-          wager: chipsAmounts,
         );
       }
     }
@@ -326,8 +343,6 @@ class GameProvider extends ChangeNotifier {
     required bool timeOut,
     required bool whiteWon,
     required Function onNewGame,
-    required UserModel userChips,
-    required int wager,
   }) {
     // stop stockfish engine
     if (stockfish != null) {
@@ -343,12 +358,12 @@ class GameProvider extends ChangeNotifier {
       if (whiteWon) {
         resultsToShow = 'White won on time';
         whitesScoresToShow = _whitesScore + 1;
-        winChips(userChips.chips, wager);
+     
 
       } else {
         resultsToShow = 'Black won on time';
         blacksSCoresToShow = _blacksSCore + 1;
-        loseChips(userChips.chips, wager);
+       
       }
     } else {
       // its not a timeOut
@@ -364,12 +379,12 @@ class GameProvider extends ChangeNotifier {
         // meaning white is the winner
         String whitesResults = game.result!.scoreString.split('-').first;
         whitesScoresToShow = _whitesScore += int.parse(whitesResults);
-        winChips(userChips.chips, wager);
+        
       } else if (game.winner == 1) {
         // meaning black is the winner
         String blacksResults = game.result!.scoreString.split('-').last;
         blacksSCoresToShow = _blacksSCore += int.parse(blacksResults);
-        loseChips(userChips.chips, wager);
+       
       } else if (game.stalemate) {
         whitesScoresToShow = whitesScore;
         blacksSCoresToShow = blacksScore;
@@ -502,6 +517,7 @@ class GameProvider extends ChangeNotifier {
         Constants.name: '',
         Constants.photoUrl: '',
         Constants.userRating: 1200,
+        Constants.chips.toString(): chipsString,
         Constants.gameCreatorUid: userModel.uid,
         Constants.gameCreatorName: userModel.name,
         Constants.gameCreatorImage: userModel.image,
@@ -876,20 +892,3 @@ class GameProvider extends ChangeNotifier {
 }
 
 
-void winChips(int userChips, int amount) {
-  // Calculate the number of chips to add based on denominations
-  if (userChips < amount) {
-    userChips += amount;
-  } else {
-   // TO DO : Ask the user to buy more chips
-}
-}
-
-void loseChips(int userChips, int amount) {
-  // Calculate the number of chips to add based on denominations
-  if (userChips < amount) {
-    userChips -= amount;
-  } else {
-   // TO DO : Ask the user to buy more chips
-  }
-}

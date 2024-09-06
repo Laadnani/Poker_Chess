@@ -262,6 +262,8 @@ class _GameScreenState extends State<GameScreen> {
       chipsAmounts: chipsAmounts,
       onNewGame: () {
         // start new game
+        // TO DO : Add chips wagered by player 1 and player 2
+        gameProvider.resetGame(newGame: true);
       },
     );
   }
@@ -461,7 +463,7 @@ class _GameScreenState extends State<GameScreen> {
           backgroundImage: AssetImage(AssetsManager.stockfishIcon),
         ),
         title: const Text('Stockfish'),
-        subtitle: Text('Chips: ${userModel.chips}'),
+        subtitle: Text('Chips: ${gameProvider.chipsWageredByPlayer2}'),
         trailing: Text(
           timeToShow,
           style: const TextStyle(fontSize: 16),
@@ -481,7 +483,7 @@ class _GameScreenState extends State<GameScreen> {
                   backgroundImage: NetworkImage(gameProvider.userPhoto),
                 ),
           title: Text(gameProvider.userName),
-          subtitle: Text('entry : ${gameProvider.userChips}'),
+          subtitle: Text('entry : ${gameProvider.chipsWageredByPlayer1}'),
           trailing: Text(
             timeToShow,
             style: const TextStyle(fontSize: 16),
@@ -499,7 +501,7 @@ class _GameScreenState extends State<GameScreen> {
                   backgroundImage: NetworkImage(gameProvider.gameCreatorPhoto),
                 ),
           title: Text(gameProvider.gameCreatorName),
-          subtitle: Text('Chips: ${gameProvider.gameCreatorChips}'),
+          subtitle: Text('Chips: ${gameProvider.chipsWageredByPlayer1}'),
           trailing: Text(
             timeToShow,
             style: const TextStyle(fontSize: 16),

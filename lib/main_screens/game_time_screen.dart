@@ -56,6 +56,10 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
 
               final String finallabel = '$lable \n $chips';
 
+              // setting both the player to the same amount of chips
+              final int chipsWageredByPlayer1 = int.parse(chips);
+              final int chipsWageredByPlayer2 = int.parse(chips);
+
               return buildGameType(
                 lable: finallabel,
                 gameTime: gameTime,
@@ -67,8 +71,7 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                         builder: (context) => GameStartUpScreen(
                           isCustomTime: true,
                           gameTime: gameTime,
-                          wager: chips,
-
+                          chipsWageredByPlayer1: chipsWageredByPlayer1.toString(),
                         ),
                       ),
                     );
@@ -79,7 +82,7 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                         builder: (context) => GameStartUpScreen(
                           isCustomTime: false,
                           gameTime: gameTime,
-                          wager: chips,
+                          chipsWageredByPlayer1: chipsWageredByPlayer1.toString(),
                         ),
                       ),
                     );

@@ -10,12 +10,12 @@ class GameStartUpScreen extends StatefulWidget {
     super.key,
     required this.isCustomTime,
     required this.gameTime,
-    required this.wager,
+    required this.chipsWageredByPlayer1,
   });
 
   final bool isCustomTime;
   final String gameTime;
-  final String wager;
+  final String chipsWageredByPlayer1;
 
   @override
   State<GameStartUpScreen> createState() => _GameStartUpScreenState();
@@ -56,7 +56,7 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('You \'re betting : ${widget.wager}'),
+                    Text('You \'re betting : ${gameProvider.chipsWageredByPlayer1}'),
                   ]),
 
                 // radioListTile
