@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chess/constants.dart';
+import 'package:flutter_chess/helper/helper_methods.dart';
 import 'package:flutter_chess/helper/uci_commands.dart';
 import 'package:flutter_chess/models/game_model.dart';
 import 'package:flutter_chess/models/user_model.dart';
@@ -246,6 +247,8 @@ class GameProvider extends ChangeNotifier {
             timeOut: true,
             whiteWon: true,
             onNewGame: onNewGame,
+            userChips: UserModel.fromMap(chipsAmounts: userChips),
+            wager: 0,
           );
         }
       }
@@ -275,16 +278,21 @@ class GameProvider extends ChangeNotifier {
             timeOut: true,
             whiteWon: false,
             onNewGame: onNewGame,
+            userChips: ,
+            wager: 0,
           );
         }
       }
     });
   }
 
+// gameover listener - check if the game is over and show the game over dialog
+
   void gameOverListerner({
     required BuildContext context,
     Stockfish? stockfish,
     required Function onNewGame,
+    required chipsAmounts,
   }) {
     if (game.gameOver) {
       // pause the timers
@@ -304,6 +312,8 @@ class GameProvider extends ChangeNotifier {
           timeOut: false,
           whiteWon: false,
           onNewGame: onNewGame,
+          userChips: chipsAmounts,
+          wager: chipsAmounts,
         );
       }
     }
@@ -316,6 +326,8 @@ class GameProvider extends ChangeNotifier {
     required bool timeOut,
     required bool whiteWon,
     required Function onNewGame,
+    required UserModel userChips,
+    required int wager,
   }) {
     // stop stockfish engine
     if (stockfish != null) {
@@ -331,9 +343,12 @@ class GameProvider extends ChangeNotifier {
       if (whiteWon) {
         resultsToShow = 'White won on time';
         whitesScoresToShow = _whitesScore + 1;
+        winChips(userChips.chips, wager);
+
       } else {
         resultsToShow = 'Black won on time';
         blacksSCoresToShow = _blacksSCore + 1;
+        loseChips(userChips.chips, wager);
       }
     } else {
       // its not a timeOut
@@ -349,10 +364,12 @@ class GameProvider extends ChangeNotifier {
         // meaning white is the winner
         String whitesResults = game.result!.scoreString.split('-').first;
         whitesScoresToShow = _whitesScore += int.parse(whitesResults);
+        winChips(userChips.chips, wager);
       } else if (game.winner == 1) {
         // meaning black is the winner
         String blacksResults = game.result!.scoreString.split('-').last;
         blacksSCoresToShow = _blacksSCore += int.parse(blacksResults);
+        loseChips(userChips.chips, wager);
       } else if (game.stalemate) {
         whitesScoresToShow = whitesScore;
         blacksSCoresToShow = blacksScore;
@@ -507,12 +524,12 @@ class GameProvider extends ChangeNotifier {
   String _gameCreatorName = '';
   String _gameCreatorPhoto = '';
   int _gameCreatorRating = 1200;
-  int _gameCreatorChips = 1000;
+  int _gameCreatorChips = 1000000;
   String _userId = '';
   String _userName = '';
   String _userPhoto = '';
   int _userRating = 1200;
-  int _userChips = 1000;
+  int _userChips = 1000000;
 
   String get gameCreatorUid => _gameCreatorUid;
   String get gameCreatorName => _gameCreatorName;
@@ -599,6 +616,7 @@ class GameProvider extends ChangeNotifier {
         Constants.userName: userName,
         Constants.userImage: userPhoto,
         Constants.userRating: userRating,
+        Constants.chips.toString(): userChips,
         Constants.isPlaying: true,
         Constants.dateCreated: DateTime.now().microsecondsSinceEpoch.toString(),
         Constants.gameScore: '0-0',
@@ -626,11 +644,11 @@ class GameProvider extends ChangeNotifier {
         .doc(userModel.uid)
         .snapshots()
         .listen((event) async {
-      // chech if the game exist
+      // check if the game exist
       if (event.exists) {
         final DocumentSnapshot game = event;
 
-        // chech if itsPlaying == true
+        // check if itsPlaying == true
         if (game[Constants.isPlaying]) {
           isPlayingStreamSubScription!.cancel();
           await Future.delayed(const Duration(milliseconds: 100));
@@ -641,6 +659,7 @@ class GameProvider extends ChangeNotifier {
           _userId = game[Constants.uid];
           _userName = game[Constants.name];
           _userPhoto = game[Constants.photoUrl];
+          _userChips = game[Constants.chips];
 
           setPlayerColor(player: 0);
           notifyListeners();
@@ -683,6 +702,7 @@ class GameProvider extends ChangeNotifier {
       Constants.name: userModel.name,
       Constants.photoUrl: userModel.image,
       Constants.userRating: userModel.playerRating,
+      Constants.chips: userModel.chips,
     });
 
     // set the player state
@@ -735,7 +755,7 @@ class GameProvider extends ChangeNotifier {
                   pauseBlacksTimer();
                   startWhitesTimer(context: context, onNewGame: () {});
 
-                  gameOverListerner(context: context, onNewGame: () {});
+                  gameOverListerner(context: context, onNewGame: () {},chipsAmounts: chipsAmounts[1]);
                 });
               }
             }
@@ -757,7 +777,7 @@ class GameProvider extends ChangeNotifier {
                 pauseWhitesTimer();
                 startBlacksTimer(context: context, onNewGame: () {});
 
-                gameOverListerner(context: context, onNewGame: () {});
+                gameOverListerner(context: context, onNewGame: () {}, chipsAmounts: chipsAmounts[1]);
               });
             }
           }
@@ -852,5 +872,24 @@ class GameProvider extends ChangeNotifier {
         );
       });
     }
+  }
+}
+
+
+void winChips(int userChips, int amount) {
+  // Calculate the number of chips to add based on denominations
+  if (userChips < amount) {
+    userChips += amount;
+  } else {
+   // TO DO : Ask the user to buy more chips
+}
+}
+
+void loseChips(int userChips, int amount) {
+  // Calculate the number of chips to add based on denominations
+  if (userChips < amount) {
+    userChips -= amount;
+  } else {
+   // TO DO : Ask the user to buy more chips
   }
 }

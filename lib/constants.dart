@@ -17,7 +17,7 @@ class Constants {
   static const String image = 'image';
   static const String email = 'email';
   static const String createdAt = 'createdAt';
-  static const int chips = 1000;
+  static const int chips = 1000000;
 
   static const String userImages = 'userImages';
   static const String users = 'users';
@@ -27,7 +27,7 @@ class Constants {
   static const String playerRating = 'playerRating';
   static const String gameCreatorRating = 'gameCreatorRating';
   static const String userRating = 'userRating';
-  static const int gameCreatorChips = 1000;
+  static const int gameCreatorChips = 1000000;
 
   static const String availableGames = 'availableGames';
   static const String photoUrl = 'photoUrl';

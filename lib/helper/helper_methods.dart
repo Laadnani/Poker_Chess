@@ -72,7 +72,7 @@ String getTimerToDisplay({
 // method to display the correct time below the board, if user is white then display white time
 // if user is black then display black time
 
-final List<String> gameTimes = [
+final List<String> gameneeds = [
   'Bullet 1+0 1000000 chips',
   'Bullet 2+1 750000 chips',
   'Bullet 3+0 500000 chips',
@@ -87,6 +87,8 @@ final List<String> gameTimes = [
   'Custom 60+0 1000 chips',
 ];
 
+final List<String> gameTimes = gameneeds.map((game) => game.split(' ')[0] + ' ' + game.split(' ')[1]).toList();
+final List<int> chipsAmounts = gameneeds.map((game) => int.parse(game.split(' ')[2])).toList();
 
 
 var textFormDecoration = InputDecoration(
@@ -147,3 +149,4 @@ bool validateEmail(String email) {
   // Check if the email matches the regular expression
   return emailRegex.hasMatch(email);
 }
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chess/constants.dart';
 import 'package:flutter_chess/helper/helper_methods.dart';
 import 'package:flutter_chess/main_screens/about_screen.dart';
 import 'package:flutter_chess/main_screens/game_time_screen.dart';
@@ -30,6 +31,20 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 38.00) ,
           children: [
+             const Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+              'Total Chips: ${Constants.chips}',
+                  style:  TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+
+
             buildGameType(
               lable: 'Play vs Computer',
               icon: Icons.computer,

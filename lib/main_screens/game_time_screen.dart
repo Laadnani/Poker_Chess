@@ -44,10 +44,9 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
             ),
             itemCount: gameTimes.length,
             itemBuilder: (context, index) {
+              // get the index of the amount of entry chips
 
-              // get the index of the amount of entry chips 
-
-              final String chips = gameTimes[index].split(' ')[2];
+              final String chips = chipsAmounts[index].toString().split(' ')[0];
 
               // get the first word of the game time
               final String lable = gameTimes[index].split(' ')[0];
@@ -55,10 +54,10 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
               // gat the second word from game time
               final String gameTime = gameTimes[index].split(' ')[1];
 
-              final String finallabel = '$lable \n $chips' ;
+              final String finallabel = '$lable \n $chips';
 
               return buildGameType(
-                lable: '$finallabel Chips',
+                lable: finallabel,
                 gameTime: gameTime,
                 onTap: () {
                   if (lable == Constants.custom) {
@@ -68,6 +67,8 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                         builder: (context) => GameStartUpScreen(
                           isCustomTime: true,
                           gameTime: gameTime,
+                          wager: chips,
+
                         ),
                       ),
                     );
@@ -78,6 +79,7 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                         builder: (context) => GameStartUpScreen(
                           isCustomTime: false,
                           gameTime: gameTime,
+                          wager: chips,
                         ),
                       ),
                     );
@@ -87,6 +89,5 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
             }),
       ),
     );
-    
   }
 }

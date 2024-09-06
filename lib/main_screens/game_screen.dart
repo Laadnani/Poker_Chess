@@ -259,6 +259,7 @@ class _GameScreenState extends State<GameScreen> {
     gameProvider.gameOverListerner(
       context: context,
       stockfish: stockfish,
+      chipsAmounts: chipsAmounts,
       onNewGame: () {
         // start new game
       },
@@ -460,7 +461,7 @@ class _GameScreenState extends State<GameScreen> {
           backgroundImage: AssetImage(AssetsManager.stockfishIcon),
         ),
         title: const Text('Stockfish'),
-        subtitle: Text('Rating: ${gameProvider.gameLevel * 1000} \n Chips: ${gameProvider.gameCreatorChips}'),
+        subtitle: Text('Chips: ${userModel.chips}'),
         trailing: Text(
           timeToShow,
           style: const TextStyle(fontSize: 16),

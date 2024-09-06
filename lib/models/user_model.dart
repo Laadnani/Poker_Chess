@@ -27,6 +27,7 @@ class UserModel {
       Constants.image: image,
       Constants.createdAt: createdAt,
       Constants.playerRating: playerRating,
+      Constants.chips.toString(): chips,
     };
   }
 
@@ -37,7 +38,7 @@ class UserModel {
       email: data[Constants.email] ?? '',
       image: data[Constants.image] ?? '',
       createdAt: data[Constants.createdAt] ?? '',
-      chips: data[Constants.chips] ?? 1000,
+      chips: data[Constants.chips] ?? 1000000,
       playerRating: data[Constants.playerRating] ?? 1200,
     );
   }
