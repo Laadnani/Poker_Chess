@@ -57,32 +57,41 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
               final String finallabel = '$lable \n $chips';
 
               // setting both the player to the same amount of chips
-              final int chipsWageredByPlayer1 = int.parse(chips);
-              final int chipsWageredByPlayer2 = int.parse(chips);
+             
+
+              
+             
+              
 
               return buildGameType(
                 lable: finallabel,
                 gameTime: gameTime,
                 onTap: () {
                   if (lable == Constants.custom) {
+                     // Use the setters from GameProvider to set chip amounts
+                    gameProvider.chipsWageredByPlayer1 = int.parse(chips);
+                    gameProvider.chipsWageredByPlayer2 = int.parse(chips);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => GameStartUpScreen(
                           isCustomTime: true,
                           gameTime: gameTime,
-                          chipsWageredByPlayer1: chipsWageredByPlayer1.toString(),
+                          chipsWageredByPlayer1: chips,
                         ),
                       ),
                     );
                   } else {
+                     // Use the setters from GameProvider to set chip amounts
+                    gameProvider.chipsWageredByPlayer1 = int.parse(chips);
+                    gameProvider.chipsWageredByPlayer2 = int.parse(chips);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => GameStartUpScreen(
                           isCustomTime: false,
                           gameTime: gameTime,
-                          chipsWageredByPlayer1: chipsWageredByPlayer1.toString(),
+                          chipsWageredByPlayer1: chips,
                         ),
                       ),
                     );

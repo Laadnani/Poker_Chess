@@ -56,7 +56,7 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('You \'re betting : ${gameProvider.chipsWageredByPlayer1}'),
+                    Text('You \'re betting : ${widget.chipsWageredByPlayer1}'),
                   ]),
 
                 // radioListTile

@@ -36,12 +36,12 @@ class GameProvider extends ChangeNotifier {
   // Chips handling variables
   int _chipsWageredByPlayer1 = 0;
   int _chipsWageredByPlayer2 = 0;
-  int _winner = 0; // 0 for no winner, 1 for player 1, 2 for player 2
+   // 0 for no winner, 1 for player 1, 2 for player 2
 
   // getters for chips handlers
   int get chipsWageredByPlayer1 => _chipsWageredByPlayer1;
   int get chipsWageredByPlayer2 => _chipsWageredByPlayer2;
-  int get winner => _winner;
+ 
 
   // setters for chips handlers
     set chipsWageredByPlayer1(int value) {

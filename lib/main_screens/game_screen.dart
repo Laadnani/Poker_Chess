@@ -455,15 +455,19 @@ class _GameScreenState extends State<GameScreen> {
     required GameProvider gameProvider,
     required UserModel userModel,
     required String timeToShow,
+ 
+
   }) {
     if (gameProvider.vsComputer) {
+      print(gameProvider.chipsWageredByPlayer1);
+      print(gameProvider.chipsWageredByPlayer2);
       return ListTile(
         leading: CircleAvatar(
           radius: 25,
           backgroundImage: AssetImage(AssetsManager.stockfishIcon),
         ),
         title: const Text('Stockfish'),
-        subtitle: Text('Chips: ${gameProvider.chipsWageredByPlayer2}'),
+        subtitle: Text('Chips: ${gameProvider.chipsWageredByPlayer1}'),
         trailing: Text(
           timeToShow,
           style: const TextStyle(fontSize: 16),
@@ -490,7 +494,9 @@ class _GameScreenState extends State<GameScreen> {
           ),
         );
       } else {
+   
         return ListTile(
+        
           leading: gameProvider.gameCreatorPhoto == ''
               ? CircleAvatar(
                   radius: 25,
@@ -510,6 +516,8 @@ class _GameScreenState extends State<GameScreen> {
       }
     }
   }
+
+
 
   Future<bool?> _showExitConfirmDialog(BuildContext context) async {
     return showDialog<bool>(
