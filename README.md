@@ -1,6 +1,10 @@
-# flutter_chat_pro
+# flutter_Poker_chess Attempt 1
 
 A Flutter and Firebase Chess Application iwth stockfish engine
+
+## DISCLAIMER : 
+    This project is ending here as the base project working on does not fit the main purpose and flexibility to acheive the desired outcome
+    Then next project acheiving the desired outcome will be on the Repo name : Poker_Chess_Android
 
 ## Getting Started
 
