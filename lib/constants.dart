@@ -62,6 +62,18 @@ class Constants {
   static const String searchingPlayerText =
       'Searching for player, please wait...';
   static const String joiningGameText = 'Joining game, please wait...';
+
+// Offline constants
+
+  static const String side = 'side'; // 0 for white and 1 for black
+  static const String userTime = 'usertime';
+  static const String winner = 'winner';
+  static const String opponentTime = 'opp time';
+  static const String userMove = 'user moves';
+  static const String opponentMove = 'opponentMove';
+  static const String isUserTurn = 'isUserTurn';
+
+
 }
 
 enum PlayerColor {
@@ -81,3 +93,5 @@ enum SignType {
   google,
   facebook,
 }
+
+

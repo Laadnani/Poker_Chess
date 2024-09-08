@@ -87,8 +87,8 @@ final List<String> gameneeds = [
   'Custom 60+0 1000 chips',
 ];
 
-final List<String> gameTimes = gameneeds.map((game) => game.split(' ')[0] + ' ' + game.split(' ')[1]).toList();
-final List<int> chipsAmounts = gameneeds.map((game) => int.parse(game.split(' ')[2])).toList();
+final List<String> gameTimes = gameneeds.map((game) => '${game.split(' ')[0]} ${game.split(' ')[1]}').toList();
+final List<int> chipsAmounts = gameneeds.map((amount) => int.parse(amount.split(' ')[2])).toList();
 
 
 var textFormDecoration = InputDecoration(

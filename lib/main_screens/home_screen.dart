@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chess/constants.dart';
 import 'package:flutter_chess/helper/helper_methods.dart';
 import 'package:flutter_chess/main_screens/about_screen.dart';
+import 'package:flutter_chess/main_screens/game_screen_offline.dart';
 import 'package:flutter_chess/main_screens/game_time_screen.dart';
 import 'package:flutter_chess/main_screens/settings_screen.dart';
 import 'package:flutter_chess/providers/game_provider.dart';
@@ -92,10 +93,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(
                     builder: (context) => const AboutScreen(),
                   ),
+
+                  
                 );
               },
             ),
-          ],
+            buildGameType(
+              lable: 'offline',
+              icon: Icons.offline_bolt_sharp,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GameScreenOffline(),
+                  ),
+                  );
+                  }
+          
+        )],
         ),
       ),
     );

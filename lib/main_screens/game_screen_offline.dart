@@ -14,14 +14,14 @@ import 'package:provider/provider.dart';
 import 'package:squares/squares.dart';
 import 'package:stockfish/stockfish.dart';
 
-class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+class GameScreenOffline extends StatefulWidget {
+  const GameScreenOffline({super.key});
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  State<GameScreenOffline> createState() => _GameScreenofflieState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenofflieState extends State<GameScreenOffline> {
   late Stockfish stockfish;
 
   @override
@@ -47,7 +47,7 @@ class _GameScreenState extends State<GameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final gameProvider = context.read<GameProvider>();
 
-      if (gameProvider.vsComputer) {
+      if (gameProvider.vsComputer == false) {
         if (gameProvider.state.state == PlayState.theirTurn &&
             !gameProvider.aiThinking) {
           gameProvider.setAiThinking(true);
@@ -61,11 +61,11 @@ class _GameScreenState extends State<GameScreen> {
 
           // set stockfish level
           stockfish.stdin =
-              '${UCICommands.goMoveTime} ${gameProvider.gameLevel * 200}';
+              '${UCICommands.goMoveTime} ${gameProvider.gameLevel * 900}';
 
           stockfish.stdout.listen((event) {
             if (event.contains(UCICommands.bestMove)) {
-              final bestMove = event.split(' ')[1];
+              final bestMove = event.split(' ')[3];
               gameProvider.makeStringMove(bestMove);
               gameProvider.setAiThinking(false);
               gameProvider.setSquaresState().whenComplete(() {
@@ -100,6 +100,7 @@ class _GameScreenState extends State<GameScreen> {
           });
         }
       } else {
+        print('why are we getting here');
         final userModel = context.read<AuthenticationProvider>().userModel;
         // listen for game changes in fireStore
         gameProvider.listenForGameChanges(
@@ -117,7 +118,7 @@ class _GameScreenState extends State<GameScreen> {
       gameProvider.setSquaresState().whenComplete(() async {
         if (gameProvider.player == Squares.white) {
           // check if we are playing vs computer
-          if (gameProvider.vsComputer) {
+          if (gameProvider.vsComputer == false) {
             // pause timer for white
             gameProvider.pauseWhitesTimer();
 
@@ -136,7 +137,7 @@ class _GameScreenState extends State<GameScreen> {
             );
           }
         } else {
-          if (gameProvider.vsComputer) {
+          if (gameProvider.vsComputer == false) {
             // pause timer for black
             gameProvider.pauseBlacksTimer();
 
@@ -158,7 +159,7 @@ class _GameScreenState extends State<GameScreen> {
       });
     }
 
-    if (gameProvider.vsComputer) {
+    if (gameProvider.vsComputer == false) {
       if (gameProvider.state.state == PlayState.theirTurn &&
           !gameProvider.aiThinking) {
         gameProvider.setAiThinking(true);
@@ -361,7 +362,7 @@ class _GameScreenState extends State<GameScreen> {
                   timeToShow: blacksTimer,
                 ),
 
-                gameProvider.vsComputer
+                gameProvider.vsComputer == false
                     ? Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: BoardController(
@@ -457,7 +458,7 @@ class _GameScreenState extends State<GameScreen> {
  
 
   }) {
-    if (gameProvider.vsComputer) {
+    if (gameProvider.vsComputer == false) {
       return ListTile(
         leading: CircleAvatar(
           radius: 25,

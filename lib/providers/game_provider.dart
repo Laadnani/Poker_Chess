@@ -7,6 +7,7 @@ import 'package:flutter_chess/helper/helper_methods.dart';
 import 'package:flutter_chess/helper/uci_commands.dart';
 import 'package:flutter_chess/models/game_model.dart';
 import 'package:flutter_chess/models/user_model.dart';
+import 'package:flutter_chess/widgets/widgets.dart';
 import 'package:squares/squares.dart';
 import 'package:bishop/bishop.dart' as bishop;
 import 'package:square_bishop/square_bishop.dart';
@@ -16,6 +17,7 @@ import 'package:uuid/uuid.dart';
 class GameProvider extends ChangeNotifier {
   late bishop.Game _game = bishop.Game(variant: bishop.Variant.standard());
   late SquaresState _state = SquaresState.initial(0);
+  late Stockfish stockfish;
   bool _aiThinking = false;
   bool _flipBoard = false;
   bool _vsComputer = false;
@@ -36,15 +38,14 @@ class GameProvider extends ChangeNotifier {
   // Chips handling variables
   int _chipsWageredByPlayer1 = 0;
   int _chipsWageredByPlayer2 = 0;
-   // 0 for no winner, 1 for player 1, 2 for player 2
+  // 0 for no winner, 1 for player 1, 2 for player 2
 
   // getters for chips handlers
   int get chipsWageredByPlayer1 => _chipsWageredByPlayer1;
   int get chipsWageredByPlayer2 => _chipsWageredByPlayer2;
- 
 
   // setters for chips handlers
-    set chipsWageredByPlayer1(int value) {
+  set chipsWageredByPlayer1(int value) {
     _chipsWageredByPlayer1 = value;
     notifyListeners();
   }
@@ -53,7 +54,6 @@ class GameProvider extends ChangeNotifier {
     _chipsWageredByPlayer2 = value;
     notifyListeners();
   }
-
 
   String get gameId => _gameId;
 
@@ -130,6 +130,7 @@ class GameProvider extends ChangeNotifier {
     // reset game
     _game = bishop.Game(variant: bishop.Variant.standard());
     _state = game.squaresState(_player);
+    notifyListeners();
   }
 
   // make squre move
@@ -234,6 +235,9 @@ class GameProvider extends ChangeNotifier {
       _whitesTime += Duration(seconds: _incrementalValue);
       _whitesTimer!.cancel();
       notifyListeners();
+    } else {
+      _whitesTimer = _whitesTimer;
+      notifyListeners();
     }
   }
 
@@ -242,6 +246,9 @@ class GameProvider extends ChangeNotifier {
     if (_blacksTimer != null) {
       _blacksTime += Duration(seconds: _incrementalValue);
       _blacksTimer!.cancel();
+      notifyListeners();
+    } else {
+      _blacksTimer = _blacksTimer;
       notifyListeners();
     }
   }
@@ -298,7 +305,6 @@ class GameProvider extends ChangeNotifier {
             timeOut: true,
             whiteWon: false,
             onNewGame: onNewGame,
-            
           );
         }
       }
@@ -307,12 +313,10 @@ class GameProvider extends ChangeNotifier {
 
 // gameover listener - check if the game is over and show the game over dialog
 
-  void gameOverListerner({
-    required BuildContext context,
-    Stockfish? stockfish,
-    required Function onNewGame,
-    required chipsAmounts,
-  }) {
+  void gameOverListerner(
+      {required BuildContext context,
+      Stockfish? stockfish,
+      required Function onNewGame}) {
     if (game.gameOver) {
       // pause the timers
       pauseWhitesTimer();
@@ -321,18 +325,23 @@ class GameProvider extends ChangeNotifier {
       // cancel the gameStreamsubscription if its not null
       if (gameStreamSubScreiption != null) {
         gameStreamSubScreiption!.cancel();
+        notifyListeners();
       }
 
       // show game over dialog
-      if (context.mounted) {
-        gameOverDialog(
-          context: context,
-          stockfish: stockfish,
-          timeOut: false,
-          whiteWon: false,
-          onNewGame: onNewGame,
-        );
-      }
+      // last update made is I took off the if statement of the gameover dialog func it was
+      // if (context.mounted) then the funtion inside of it, I made it to check if the
+      // if statement was stoping this functionality
+      gameOverDialog(
+        context: context,
+        stockfish: stockfish,
+        timeOut: false,
+        whiteWon: false,
+        onNewGame: onNewGame,
+      );
+
+      print('Do we ever get to here ?');
+      notifyListeners();
     }
   }
 
@@ -351,6 +360,7 @@ class GameProvider extends ChangeNotifier {
     String resultsToShow = '';
     int whitesScoresToShow = 0;
     int blacksSCoresToShow = 0;
+    int chipsWagered = _chipsWageredByPlayer1;
 
     // check if its a timeOut
     if (timeOut) {
@@ -358,16 +368,18 @@ class GameProvider extends ChangeNotifier {
       if (whiteWon) {
         resultsToShow = 'White won on time';
         whitesScoresToShow = _whitesScore + 1;
-     
-
+        moveChips(chipsWagered, chipsWagered, true);
+        notifyListeners();
       } else {
         resultsToShow = 'Black won on time';
         blacksSCoresToShow = _blacksSCore + 1;
-       
+        moveChips(chipsWagered, chipsWagered, false);
+        notifyListeners();
       }
-    } else {
+    } else if (game.result == null) {
       // its not a timeOut
       resultsToShow = game.result!.readable;
+      notifyListeners();
 
       if (game.drawn) {
         // game is a draw
@@ -375,19 +387,25 @@ class GameProvider extends ChangeNotifier {
         String blacksResults = game.result!.scoreString.split('-').last;
         whitesScoresToShow = _whitesScore += int.parse(whitesResults);
         blacksSCoresToShow = _blacksSCore += int.parse(blacksResults);
+        notifyListeners();
       } else if (game.winner == 0) {
         // meaning white is the winner
         String whitesResults = game.result!.scoreString.split('-').first;
         whitesScoresToShow = _whitesScore += int.parse(whitesResults);
-        
+        moveChips(chipsWagered, chipsWagered, true);
+        print('Not getting here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        notifyListeners();
       } else if (game.winner == 1) {
         // meaning black is the winner
         String blacksResults = game.result!.scoreString.split('-').last;
         blacksSCoresToShow = _blacksSCore += int.parse(blacksResults);
-       
+        moveChips(chipsWagered, chipsWagered, false);
+        print('Not getting here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        notifyListeners();
       } else if (game.stalemate) {
         whitesScoresToShow = whitesScore;
         blacksSCoresToShow = blacksScore;
+        notifyListeners();
       }
     }
 
@@ -396,7 +414,7 @@ class GameProvider extends ChangeNotifier {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          'Game Over\n $whitesScoresToShow - $blacksSCoresToShow',
+          'Game Over\n $whitesScoresToShow - $blacksSCoresToShow \n chips: $chipsWagered',
           textAlign: TextAlign.center,
         ),
         content: Text(
@@ -506,7 +524,6 @@ class GameProvider extends ChangeNotifier {
     // create a game id
     _gameId = const Uuid().v4();
     notifyListeners();
-    final String chipsString = Constants.chips.toString();
 
     try {
       await firebaseFirestore
@@ -517,12 +534,11 @@ class GameProvider extends ChangeNotifier {
         Constants.name: '',
         Constants.photoUrl: '',
         Constants.userRating: 1200,
-        Constants.chips.toString(): chipsString,
         Constants.gameCreatorUid: userModel.uid,
         Constants.gameCreatorName: userModel.name,
         Constants.gameCreatorImage: userModel.image,
         Constants.gameCreatorRating: userModel.playerRating,
-        Constants.gameCreatorChips.toString() : userModel.chips,
+        Constants.gameCreatorChips.toString(): userModel.chips,
         Constants.isPlaying: false,
         Constants.gameId: gameId,
         Constants.dateCreated: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -771,7 +787,8 @@ class GameProvider extends ChangeNotifier {
                   pauseBlacksTimer();
                   startWhitesTimer(context: context, onNewGame: () {});
 
-                  gameOverListerner(context: context, onNewGame: () {},chipsAmounts: chipsAmounts[1]);
+                  gameOverListerner(context: context, onNewGame: () {});
+                  notifyListeners();
                 });
               }
             }
@@ -793,7 +810,7 @@ class GameProvider extends ChangeNotifier {
                 pauseWhitesTimer();
                 startBlacksTimer(context: context, onNewGame: () {});
 
-                gameOverListerner(context: context, onNewGame: () {}, chipsAmounts: chipsAmounts[1]);
+                gameOverListerner(context: context, onNewGame: () {});
               });
             }
           }
@@ -890,5 +907,57 @@ class GameProvider extends ChangeNotifier {
     }
   }
 }
+// TO DO: Method to check if a player can enter the Chess game depending on his chips amount
+// if the checkIfPlayerCanEnterGame return 1 the player cannot enter the game else the player can enter the game
 
+int checkIfPlayerCanEnterGame(int chips, int wager) {
+  if (chips < wager) {
+    // snack bar to show that the player does not have enough chips to enter the game
+    const SnackBar(content: Text('Not enough chips to enter the game'));
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+// TO DO: Method to add or remove chips from the user's account
+
+int moveChips(int chips, int amount, bool isWinner) {
+  // check if player is adding or removing chips OR winner or loser
+  if (isWinner) {
+    chips += amount;
+  } else {
+    chips -= amount;
+  }
+  return chips;
+}
+
+// adding a game offline against Stockfish AI
+void createOfflineGame() async {
+  final Stockfish stockfish;
+  // create an offline game
+  // create a new instance
+    stockfish = Stockfish();
+
+  // state is a ValueListenable<StockfishState>
+  print(stockfish.state.value);
+
+// the engine takes a few moment to start
+  Future<void> waitUntilReady() async {
+    while (stockfish.state.value != StockfishState.ready) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+  print(stockfish.state.value);
+
+  // ending the stockfish stream
+
+  stockfish.dispose();
+  print(stockfish.state.value);
+}
+// create a game model with the initial position and the Stockfish AI
+
+// Check available chips
+
+// set the game data and settings
 
